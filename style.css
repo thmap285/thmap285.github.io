@@ -1,34 +1,130 @@
+body {
+  height: 100vh;
+  padding: 50px;
+}
+
 * {
-    font-family: 'Share Tech Mono', Share Tech Mono;
+  padding: 0;
+  margin: 0;
 }
 
-html {
-    background: black;
-    color: #ffffff;
-    width: 100%;
-    height: 100%;
+.board {
+  display: flex;
+  height: 100%;
 }
 
-h1.home {
-    color: #fff;
-    font-size: 2.5em;
+.column {
+  position: relative;
+  flex: 1;
+  margin: 10px;
+  padding: 40px 0;
 }
 
-div.about {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    -ms-transform: translate(-50%, -50%);
-    /* IE 9 */
-    -webkit-transform: translate(-50%, -50%);
-    /* Chrome, Safari, Opera */
-    display: block;
-    text-align: center;
-    color: #10be00;
+#todo .title {
+  background-color: #fae3de;
+  color: #5a221e;
 }
 
-a.url {
-    color: #10be00;
-    text-decoration: none;
+#progress .title {
+  background-color: #faedcc;
+  color: #4c3c2b;
+}
+
+#complete .title {
+  background-color: #deecdc;
+  color: #314538;
+}
+
+.title {
+  position: absolute;
+  top: 0;
+  left: 5px;
+  padding: 4px 6px;
+  border-radius: 4px;
+}
+
+.item {
+  padding: 5px;
+  margin: 5px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  cursor: grab;
+}
+
+.item:active {
+  cursor: grabbing;
+}
+
+.item {
+  position: relative;
+  margin: 0 -3px;
+  padding: 14px 30px 14px 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.item + .item {
+  margin-top: 8px;
+}
+
+.text {
+  position: relative;
+  display: inline-block;
+  vertical-align: top;
+  min-width: 20px;
+  font-size: 18px;
+  line-height: 24px;
+  min-height: 24px;
+  color: #222;
+  white-space: pre-wrap;
+}
+
+.text::before {
+  content: "";
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.text:hover {
+  cursor: text;
+}
+
+.text:hover::before {
+  position: absolute;
+  opacity: 1;
+  top: 2px;
+  right: -24px;
+  width: 25px;
+  height: 25px;
+  background: no-repeat url("./assets/edit.png") 0 0 / cover;
+}
+
+.text:focus {
+  outline: none;
+}
+
+.btn_add {
+  display: flex;
+  align-items: center;
+  column-gap: 8px;
+  width: 100%;
+  border: 0;
+  background: transparent;
+  font-size: 20px;
+  color: #a1a09e;
+  padding: 10px 5px;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.btn_add:hover {
+  border-radius: 8px;
+  background-color: #f1f1f0;
+}
+
+.btn_add::before {
+  content: "";
+  background: no-repeat url("./assets/plus.png") 0 0 / cover;
+  width: 18px;
+  height: 18px;
 }
