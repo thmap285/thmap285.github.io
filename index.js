@@ -26,6 +26,21 @@ function drop(event) {
   const itemId = event.dataTransfer.getData("text");
   const targetColumn = event.target;
   targetColumn.appendChild(document.getElementById(itemId));
+
+  // Lưu trữ thông tin vị trí của các items
+  const items = document.querySelectorAll('.item');
+  const itemPositions = [];
+  
+  for (let i = 0; i < items.length; i++) {
+    const itemPosition = {
+      id: items[i].id,
+      column: items[i].parentNode.id,
+      index: i
+    };
+    itemPositions.push(itemPosition);
+  }
+
+  localStorage.setItem("itemPositions", JSON.stringify(itemPositions));
 }
 
 function addItem(columnId) {
@@ -39,3 +54,18 @@ function addItem(columnId) {
 
   column.appendChild(newItem);
 }
+
+window.onload = function() {
+  // Lấy thông tin vị trí của các items từ localStorage
+  const itemPositions = JSON.parse(localStorage.getItem("itemPositions"));
+
+  // Thực hiện đặt lại vị trí của các items trên trang
+  if (itemPositions !== null) {
+    for (let i = 0; i < itemPositions.length; i++) {
+      const item = document.getElementById(itemPositions[i].id);
+      const column = document.getElementById(itemPositions[i].column);
+      const index = itemPositions[i].index;
+      column.insertBefore(item, column.children[index]);
+    }
+  }
+};
