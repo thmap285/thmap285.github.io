@@ -26,46 +26,91 @@ function drop(event) {
   const itemId = event.dataTransfer.getData("text");
   const targetColumn = event.target;
   targetColumn.appendChild(document.getElementById(itemId));
-
-  // Lưu trữ thông tin vị trí của các items
-  const items = document.querySelectorAll('.item');
-  const itemPositions = [];
-  
-  for (let i = 0; i < items.length; i++) {
-    const itemPosition = {
-      id: items[i].id,
-      column: items[i].parentNode.id,
-      index: i
-    };
-    itemPositions.push(itemPosition);
-  }
-
-  localStorage.setItem("itemPositions", JSON.stringify(itemPositions));
 }
 
 function addItem(columnId) {
   const column = document.getElementById(columnId);
   const newItem = document.createElement("div");
   newItem.className = "item";
-  newItem.innerHTML = '<span class="text" contenteditable="true">Untitled</span>';
+  newItem.innerHTML = `
+    <div class="item-header"> 
+      <span class="text" contenteditable="true">Untitled</span>
+      <button class="delete">X</button>
+    </div>
+  `;
   newItem.draggable = true;
   newItem.id = "item" + Date.now();
   newItem.addEventListener("dragstart", drag);
 
+  const deleteButton = newItem.querySelector('.delete');
+  deleteButton.addEventListener('click', (e) => {
+    const item = e.target.closest('.item');
+    item.remove();
+    saveData();
+  });
+
   column.appendChild(newItem);
+
+  saveData();
 }
 
-window.onload = function() {
-  // Lấy thông tin vị trí của các items từ localStorage
-  const itemPositions = JSON.parse(localStorage.getItem("itemPositions"));
+function saveData() {
+  // Lấy tất cả các phần tử có lớp là "item" và lưu chúng vào một mảng
+  const items = document.querySelectorAll('.item');
+  const itemData = [];
 
-  // Thực hiện đặt lại vị trí của các items trên trang
-  if (itemPositions !== null) {
-    for (let i = 0; i < itemPositions.length; i++) {
-      const item = document.getElementById(itemPositions[i].id);
-      const column = document.getElementById(itemPositions[i].column);
-      const index = itemPositions[i].index;
-      column.insertBefore(item, column.children[index]);
-    }
+  items.forEach(item => {
+    itemData.push({
+      id: item.id,
+      column: item.parentNode.id,
+      text: item.querySelector('.text').textContent
+    });
+  });
+
+  // Lưu trữ mảng itemData vào localStorage
+  localStorage.setItem('kanbanData', JSON.stringify(itemData));
+}
+
+function loadData() {
+  // Lấy các dữ liệu đã lưu từ localStorage
+  const kanbanData = localStorage.getItem('kanbanData');
+
+  // Nếu có dữ liệu, thực hiện việc đặt lại các phần tử trên bảng kanban.
+  if (kanbanData !== null) {
+    const itemData = JSON.parse(kanbanData);
+    itemData.forEach(item => {
+      const column = document.getElementById(item.column);
+      const newItem = document.createElement('div');
+      newItem.className = 'item';
+      newItem.id = item.id;
+      newItem.innerHTML = `
+    <div class="item-header"> 
+      <span class="text" contenteditable="true">Untitled</span>
+      <button class="delete">X</button>
+    </div>
+  `;
+      newItem.draggable = true;
+      newItem.addEventListener('dragstart', drag);
+      column.appendChild(newItem);
+
+      // Thêm sự kiện click cho nút xóa của phần tử
+      const deleteButton = newItem.querySelector('.delete');
+      deleteButton.addEventListener('click', (e) => {
+        const item = e.target.closest('.item');
+        item.remove();
+        saveData();
+      });
+    });
   }
-};
+}
+
+// Lưu trữ dữ liệu khi người dùng thay đổi vị trí phần tử kanban hoặc nội dung
+const itemColumns = document.querySelectorAll('.column');
+itemColumns.forEach(column => {
+  column.addEventListener('mouseup', saveData);
+});
+
+// Tải dữ liệu kanban lưu trữ từ localStorage khi trang được tải
+window.addEventListener('load', loadData);
+
+window.addEventListener('beforeunload', saveData);
