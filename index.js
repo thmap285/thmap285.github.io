@@ -55,7 +55,6 @@ function addItem(columnId) {
 }
 
 function saveData() {
-  // Lấy tất cả các phần tử có lớp là "item" và lưu chúng vào một mảng
   const items = document.querySelectorAll('.item');
   const itemData = [];
 
@@ -67,15 +66,12 @@ function saveData() {
     });
   });
 
-  // Lưu trữ mảng itemData vào localStorage
   localStorage.setItem('kanbanData', JSON.stringify(itemData));
 }
 
 function loadData() {
-  // Lấy các dữ liệu đã lưu từ localStorage
   const kanbanData = localStorage.getItem('kanbanData');
 
-  // Nếu có dữ liệu, thực hiện việc đặt lại các phần tử trên bảng kanban.
   if (kanbanData !== null) {
     const itemData = JSON.parse(kanbanData);
     itemData.forEach(item => {
@@ -89,11 +85,12 @@ function loadData() {
       <button class="delete">X</button>
     </div>
   `;
+      const textElement = newItem.querySelector('.text');
+      textElement.textContent = item.text;
       newItem.draggable = true;
       newItem.addEventListener('dragstart', drag);
       column.appendChild(newItem);
 
-      // Thêm sự kiện click cho nút xóa của phần tử
       const deleteButton = newItem.querySelector('.delete');
       deleteButton.addEventListener('click', (e) => {
         const item = e.target.closest('.item');
@@ -104,13 +101,11 @@ function loadData() {
   }
 }
 
-// Lưu trữ dữ liệu khi người dùng thay đổi vị trí phần tử kanban hoặc nội dung
 const itemColumns = document.querySelectorAll('.column');
 itemColumns.forEach(column => {
   column.addEventListener('mouseup', saveData);
 });
 
-// Tải dữ liệu kanban lưu trữ từ localStorage khi trang được tải
 window.addEventListener('load', loadData);
 
 window.addEventListener('beforeunload', saveData);
